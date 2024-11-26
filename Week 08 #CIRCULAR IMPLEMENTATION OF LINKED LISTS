@@ -1,0 +1,197 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = newNode;
+    return newNode;
+}
+void insertAtBeginning(struct Node** head, int data) {
+    struct Node* newNode = createNode(data);
+    if (*head == NULL) {
+        *head = newNode;  
+    } else {
+        struct Node* temp = *head
+        while (temp->next != *head) {
+            temp = temp->next;
+        }
+        temp->next = newNode;  
+        newNode->next = *head; 
+        *head = newNode;       
+    }
+}
+
+void insertAtEnd(struct Node** head, int data) {
+    struct Node* newNode = createNode(data);
+    if (*head == NULL) {
+        *head = newNode;
+    } else {
+        struct Node* temp = *head;
+        while (temp->next != *head) {
+            temp = temp->next;
+        }
+        temp->next = newNode;  
+        newNode->next = *head; 
+    }
+}
+void insertAtPosition(struct Node** head, int data, int position) {
+    if (position == 1) {
+        insertAtBeginning(head, data);
+        return;
+    }
+
+    struct Node* newNode = createNode(data);
+    struct Node* temp = *head;
+
+    for (int i = 1; i < position - 1; i++) {
+        if (temp->next == *head) {
+            printf("Position out of range\n");
+            return;
+        }
+        temp = temp->next;
+    }
+
+    newNode->next = temp->next;
+    temp->next = newNode;
+}
+
+
+void deleteAtFirst(struct Node** head) {
+    if (*head == NULL) {
+        printf("List is empty, nothing to delete.\n");
+        return;
+    }
+    struct Node* temp = *head;
+    if (temp->next == *head) {
+        free(temp);
+        *head = NULL;  
+    } else {
+        struct Node* last = *head;
+        while (last->next != *head) {
+            last = last->next;
+        }
+        *head = temp->next;  
+        last->next = *head; 
+        free(temp);
+    }
+}
+void deleteAtEnd(struct Node** head) {
+    if (*head == NULL) {
+        printf("List is empty, nothing to delete.\n");
+        return;
+    }
+    struct Node* temp = *head;
+    if (temp->next == *head) {
+        free(temp);
+        *head = NULL;  
+    } else {
+        struct Node* prev = NULL;
+        while (temp->next != *head) {
+            prev = temp;
+            temp = temp->next;
+        }
+        prev->next = *head; 
+        free(temp);
+    }
+}
+void deleteAtPosition(struct Node** head, int position) {
+    if (*head == NULL) {
+        printf("List is empty, nothing to delete.\n");
+        return;
+    }
+    struct Node* temp = *head;
+    if (position == 1) {
+        deleteAtFirst(head);
+        return;
+    }
+
+    struct Node* prev = NULL;
+    for (int i = 1; i < position; i++) {
+        if (temp->next == *head) {
+            printf("Position out of range\n");
+            return;
+        }
+        prev = temp;
+        temp = temp->next;
+    }
+    prev->next = temp->next; 
+    free(temp);
+}
+void display(struct Node* head) {
+    if (head == NULL) {
+        printf("List is empty\n");
+        return;
+    }
+    struct Node* temp = head;
+    do {
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+    } while (temp != head);
+    printf("(back to head)\n");
+}
+
+int main() {
+    struct Node* head = NULL;
+    int choice, data, position;
+
+    while(1) {
+        printf("\nCircular Linked List Menu:\n");
+        printf("1. Insert at beginning\n");
+        printf("2. Insert at end\n");
+        printf("3. Insert at position\n");
+        printf("4. Delete at first\n");
+        printf("5. Delete at end\n");
+        printf("6. Delete at position\n");
+        printf("7. Display\n");
+        printf("8. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter data to insert at beginning: ");
+                scanf("%d", &data);
+                insertAtBeginning(&head, data);
+                break;
+            case 2:
+                printf("Enter data to insert at end: ");
+                scanf("%d", &data);
+                insertAtEnd(&head, data);
+                break;
+            case 3:
+                printf("Enter data to insert: ");
+                scanf("%d", &data);
+                printf("Enter position: ");
+                scanf("%d", &position);
+                insertAtPosition(&head, data, position);
+                break;
+            case 4:
+                deleteAtFirst(&head);
+                break;
+            case 5:
+                deleteAtEnd(&head);
+                break;
+            case 6:
+                printf("Enter position to delete: ");
+                scanf("%d", &position);
+                deleteAtPosition(&head, position);
+                break;
+            case 7:
+                display(head);
+                break;
+            case 8:
+                printf("Exiting program.\n");
+                break;
+            default:
+                printf("Invalid choice, please try again.\n");
+        }
+    } 
+
+    return 0;
+}
